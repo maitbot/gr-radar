@@ -1,27 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 
-# Copyright 2014 Communications Engineering Lab, KIT.
-# 
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-# 
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
-# 
+#
+# Copyright 2014,2022 Communications Engineering Lab, KIT.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
 
 from gnuradio import gr, gr_unittest
-from gnuradio import blocks
-import radar_swig as radar
+# from gnuradio import blocks
+try:
+  from gnuradio.radar import signal_generator_cw_c
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio.radar import signal_generator_cw_c
+
 import numpy as np
 
 class qa_signal_generator_cw_c (gr_unittest.TestCase):
@@ -41,7 +36,7 @@ class qa_signal_generator_cw_c (gr_unittest.TestCase):
 		frequency = (500, 500)
 		amplitude = 1
 		
-		test = radar.signal_generator_cw_c(packet_len, samp_rate, frequency, amplitude)
+		test = signal_generator_cw_c(packet_len, samp_rate, frequency, amplitude)
 		head = blocks.head(8,test_len)
 		sink = blocks.vector_sink_c()
 		
@@ -69,4 +64,4 @@ class qa_signal_generator_cw_c (gr_unittest.TestCase):
 		self.assertComplexTuplesAlmostEqual(out_data,ref_data,2) # check out_data with ref_data
 
 if __name__ == '__main__':
-	gr_unittest.run(qa_signal_generator_cw_c)#, "qa_signal_generator_cw_c.xml")
+	gr_unittest.run(qa_signal_generator_cw_c)

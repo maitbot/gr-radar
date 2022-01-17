@@ -1,27 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2014 Communications Engineering Lab, KIT.
+# Copyright 2014,2022 Communications Engineering Lab, KIT.
 #
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 
 from gnuradio import gr, gr_unittest
-from gnuradio import blocks
-import radar_swig as radar
+# from gnuradio import blocks
+try:
+  from gnuradio.radar import crop_matrix_vcvc
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio.radar import crop_matrix_vcvc
 
 class qa_crop_matrix_vcvc (gr_unittest.TestCase):
 
@@ -42,7 +36,7 @@ class qa_crop_matrix_vcvc (gr_unittest.TestCase):
 		src = blocks.vector_source_c(in_data)
 		s2v = blocks.stream_to_vector(8,vlen_in)
 		s2ts = blocks.stream_to_tagged_stream(8,vlen_in,len(in_data)/vlen_in,'packet_len')
-		crop = radar.crop_matrix_vcvc(vlen_in,crop_x,crop_y)
+		crop = crop_matrix_vcvc(vlen_in,crop_x,crop_y)
 		v2s = blocks.vector_to_stream(8,crop_x[1]-crop_x[0])
 		snk = blocks.vector_sink_c()
 		debug = blocks.tag_debug(8,'debug')
@@ -70,7 +64,7 @@ class qa_crop_matrix_vcvc (gr_unittest.TestCase):
 		src = blocks.vector_source_c(in_data)
 		s2v = blocks.stream_to_vector(8,vlen_in)
 		s2ts = blocks.stream_to_tagged_stream(8,vlen_in,len(in_data)/vlen_in,'packet_len')
-		crop = radar.crop_matrix_vcvc(vlen_in,crop_x,crop_y)
+		crop = crop_matrix_vcvc(vlen_in,crop_x,crop_y)
 		v2s = blocks.vector_to_stream(8,crop_x[1]-crop_x[0])
 		snk = blocks.vector_sink_c()
 		debug = blocks.tag_debug(8,'debug')
