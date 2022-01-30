@@ -2,26 +2,21 @@
 # -*- coding: utf-8 -*-
 # 
 # Copyright 2014 Communications Engineering Lab, KIT.
-# 
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-# 
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
-# 
+# Copyright 2022 A. Maitland Bottoms
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks, filter
-import radar_swig as radar
+try:
+  from gnuradio import radar
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio import radar
 from time import sleep
 import pmt
 from matplotlib import pyplot as plt
@@ -71,30 +66,30 @@ class qa_estimator_fmcw (gr_unittest.TestCase):
 		
 		resamp = filter.rational_resampler_ccc(1,decim_fac)
 		resamp_tag = blocks.tagged_stream_multiply_length(8,'packet_len',1.0/float(decim_fac))
-		resamp_tag.set_min_output_buffer(min_output_buffer/(decim_fac))
+		resamp_tag.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
 		
-		packets = (samp_cw/(decim_fac), samp_up/(decim_fac), samp_down/(decim_fac))
+		packets = (int(samp_cw/(decim_fac)), int(samp_up/(decim_fac)), int(samp_down/(decim_fac)))
 		split_cw = radar.split_cc(0,packets)
 		split_up = radar.split_cc(1,packets)
 		split_down = radar.split_cc(2,packets)
-		split_cw.set_min_output_buffer(min_output_buffer/(decim_fac))
-		split_up.set_min_output_buffer(min_output_buffer/(decim_fac))
-		split_down.set_min_output_buffer(min_output_buffer/(decim_fac))
+		split_cw.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
+		split_up.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
+		split_down.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
 		
-		fft_cw = radar.ts_fft_cc(samp_cw/(decim_fac))
-		fft_up = radar.ts_fft_cc(samp_up/(decim_fac))
-		fft_down = radar.ts_fft_cc(samp_down/(decim_fac))
-		fft_cw.set_min_output_buffer(min_output_buffer/(decim_fac))
-		fft_up.set_min_output_buffer(min_output_buffer/(decim_fac))
-		fft_down.set_min_output_buffer(min_output_buffer/(decim_fac))
+		fft_cw = radar.ts_fft_cc(int(samp_cw/(decim_fac)))
+		fft_up = radar.ts_fft_cc(int(samp_up/(decim_fac)))
+		fft_down = radar.ts_fft_cc(int(samp_down/(decim_fac)))
+		fft_cw.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
+		fft_up.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
+		fft_down.set_min_output_buffer(int(min_output_buffer/(decim_fac)))
 		
 		threshold = -300
 		samp_protect = 0
-		cfar_cw = radar.find_max_peak_c(samp_rate/(decim_fac), threshold, samp_protect, (0,0), False)
-		cfar_up = radar.find_max_peak_c(samp_rate/(decim_fac), threshold, samp_protect, (0,0), False)
-		cfar_down = radar.find_max_peak_c(samp_rate/(decim_fac), threshold, samp_protect, (0,0), False)
+		cfar_cw = radar.find_max_peak_c(int(samp_rate/(decim_fac)), threshold, samp_protect, (0,0), False)
+		cfar_up = radar.find_max_peak_c(int(samp_rate/(decim_fac)), threshold, samp_protect, (0,0), False)
+		cfar_down = radar.find_max_peak_c(int(samp_rate/(decim_fac)), threshold, samp_protect, (0,0), False)
 		
-		est = radar.estimator_fmcw(samp_rate/(decim_fac), center_freq, freq_sweep, samp_up/(decim_fac), samp_down/(decim_fac), push_power)
+		est = radar.estimator_fmcw(int(samp_rate/(decim_fac)), center_freq, freq_sweep, int(samp_up/(decim_fac)), int(samp_down/(decim_fac)), push_power)
 		
 		res = radar.print_results()
 		debug = blocks.message_debug()

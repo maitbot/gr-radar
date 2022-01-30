@@ -2,26 +2,21 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 Communications Engineering Lab, KIT.
+# Copyright 2022 A. Maitland Bottoms
 #
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import radar_swig as radar
+try:
+  from gnuradio import radar
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio import radar
 
 class qa_ofdm_divide_vcvc (gr_unittest.TestCase):
 
@@ -36,7 +31,7 @@ class qa_ofdm_divide_vcvc (gr_unittest.TestCase):
 		# set up fg
 		test_len = 20
 		vlen = 5
-		ts_len = test_len/vlen/2
+		ts_len = int(test_len/vlen/2)
 
 		in_data0 = [0]*test_len
 		in_data1 = [0]*test_len
@@ -78,7 +73,7 @@ class qa_ofdm_divide_vcvc (gr_unittest.TestCase):
 		# set up fg
 		test_len = 200
 		vlen = 20
-		ts_len = test_len/vlen
+		ts_len = int(test_len/vlen)
 
 		discarded_carriers = (-8,-4,-2,1,2,3,9)
 		num_sync_words = 2

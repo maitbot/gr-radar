@@ -2,26 +2,22 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 Communications Engineering Lab, KIT.
+# Copyright 2022 A. Maitland Bottoms
 #
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks, fft
-import radar_swig as radar
+try:
+  from gnuradio import radar
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio import radar
+
 import numpy as np
 import numpy.fft
 
@@ -105,7 +101,7 @@ class qa_ts_fft_cc (gr_unittest.TestCase):
 		self.tb.connect(src,head,tsfft,snk1)
 
 		s2v = blocks.stream_to_vector(8, packet_len)
-		fft_inbuild = fft.fft_vcc(test_len,True,fft.window_rectangular(0))
+		fft_inbuild = fft.fft_vcc(test_len,True,fft.window.rectangular(0))
 		snk2 = blocks.vector_sink_c()
 		v2s = blocks.vector_to_stream(8, packet_len);
 		self.tb.connect(head,s2v,fft_inbuild,v2s,snk2)

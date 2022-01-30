@@ -2,26 +2,21 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 Communications Engineering Lab, KIT.
+# Copyright 2022 A. Maitland Bottoms
 #
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import radar_swig as radar
+try:
+  from gnuradio import radar
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio import radar
 
 class qa_transpose_matrix_vcvc (gr_unittest.TestCase):
 
@@ -41,7 +36,7 @@ class qa_transpose_matrix_vcvc (gr_unittest.TestCase):
 
 		src = blocks.vector_source_c(in_data)
 		stv = blocks.stream_to_vector(8,vlen_in)
-		s2ts = blocks.stream_to_tagged_stream(8,vlen_in,test_len/vlen_in,'packet_len')
+		s2ts = blocks.stream_to_tagged_stream(8,vlen_in,int(test_len/vlen_in),'packet_len')
 		transpose = radar.transpose_matrix_vcvc(vlen_in,vlen_out,'packet_len')
 		vts = blocks.vector_to_stream(8,vlen_out)
 		snk = blocks.vector_sink_c()
@@ -75,7 +70,7 @@ class qa_transpose_matrix_vcvc (gr_unittest.TestCase):
 
 		src = blocks.vector_source_c(in_data)
 		stv = blocks.stream_to_vector(8,vlen_in)
-		s2ts = blocks.stream_to_tagged_stream(8,vlen_in,test_len/vlen_in,'packet_len')
+		s2ts = blocks.stream_to_tagged_stream(8,vlen_in,int(test_len/vlen_in),'packet_len')
 		transpose1 = radar.transpose_matrix_vcvc(vlen_in,vlen_out,'packet_len')
 		transpose2 = radar.transpose_matrix_vcvc(vlen_out,vlen_in,'packet_len')
 		vts = blocks.vector_to_stream(8,vlen_in)

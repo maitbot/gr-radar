@@ -1,21 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# Copyright 2014,2022 Communications Engineering Lab, KIT.
+# Copyright 2014 Communications Engineering Lab, KIT.
+# Copyright 2022 A. Maitland Bottoms
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 #
 
 from gnuradio import gr, gr_unittest
-# from gnuradio import blocks
+from gnuradio import blocks
 try:
-  from gnuradio.radar import signal_generator_cw_c
+  from gnuradio import radar
 except ImportError:
     import os
     import sys
     dirname, filename = os.path.split(os.path.abspath(__file__))
     sys.path.append(os.path.join(dirname, "bindings"))
-    from gnuradio.radar import signal_generator_cw_c
+    from gnuradio import radar
 
 import numpy as np
 
@@ -36,7 +37,7 @@ class qa_signal_generator_cw_c (gr_unittest.TestCase):
 		frequency = (500, 500)
 		amplitude = 1
 		
-		test = signal_generator_cw_c(packet_len, samp_rate, frequency, amplitude)
+		test = radar.signal_generator_cw_c(packet_len, samp_rate, frequency, amplitude)
 		head = blocks.head(8,test_len)
 		sink = blocks.vector_sink_c()
 		

@@ -2,26 +2,22 @@
 # -*- coding: utf-8 -*-
 # 
 # Copyright 2014 Communications Engineering Lab, KIT.
-# 
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-# 
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
-# 
+# Copyright 2022 A. Maitland Bottoms
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import radar_swig as radar
+try:
+  from gnuradio import radar
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio import radar
+
 from time import sleep
 import pmt
 
@@ -47,10 +43,10 @@ class qa_estimator_fsk (gr_unittest.TestCase):
 		velocity = 5
 				
 		samp_per_freq = 1
-		blocks_per_tag = packet_len/2
-		freq_low = 0
+		blocks_per_tag = int(packet_len/2)
+		freq_low = 0.0
 		freq_high = 1250000
-		amplitude = 1
+		amplitude = 1.0
 		samp_discard = 0
 
 		src = radar.signal_generator_fsk_c(samp_rate, samp_per_freq, blocks_per_tag, freq_low, freq_high, amplitude)
@@ -65,9 +61,9 @@ class qa_estimator_fsk (gr_unittest.TestCase):
 		mult = blocks.multiply_conjugate_cc()
 		mult.set_min_output_buffer(min_output_buffer)
 		
-		fft1 = radar.ts_fft_cc(packet_len/2)
+		fft1 = radar.ts_fft_cc(int(packet_len/2))
 		fft1.set_min_output_buffer(min_output_buffer)
-		fft2 = radar.ts_fft_cc(packet_len/2)
+		fft2 = radar.ts_fft_cc(int(packet_len/2))
 		fft2.set_min_output_buffer(min_output_buffer)
 		
 		split = radar.split_fsk_cc(samp_per_freq,samp_discard)
@@ -76,7 +72,7 @@ class qa_estimator_fsk (gr_unittest.TestCase):
 		mult_conj = blocks.multiply_conjugate_cc()
 		mult_conj.set_min_output_buffer(min_output_buffer)
 		
-		cfar = radar.find_max_peak_c(samp_rate/2,-120,0,(),False)
+		cfar = radar.find_max_peak_c(int(samp_rate/2),-120,0,(),False)
 		cfar.set_min_output_buffer(min_output_buffer)
 		
 		est = radar.estimator_fsk(center_freq,freq_high-freq_low)

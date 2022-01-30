@@ -2,26 +2,21 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright 2014 Communications Engineering Lab, KIT.
+# Copyright 2022 A. Maitland Bottoms
 #
-# This is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation; either version 3, or (at your option)
-# any later version.
-#
-# This software is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this software; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street,
-# Boston, MA 02110-1301, USA.
+# SPDX-License-Identifier: GPL-3.0-or-later
 #
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks, digital
-import radar_swig as radar
+try:
+  from gnuradio import radar
+except ImportError:
+    import os
+    import sys
+    dirname, filename = os.path.split(os.path.abspath(__file__))
+    sys.path.append(os.path.join(dirname, "bindings"))
+    from gnuradio import radar
 
 class qa_ofdm_cyclic_prefix_remover_cvc (gr_unittest.TestCase):
 
@@ -35,13 +30,13 @@ class qa_ofdm_cyclic_prefix_remover_cvc (gr_unittest.TestCase):
         # set up fg
         test_len = 1000
         fft_len = 100;
-        cp_len = fft_len/4
+        cp_len = int(fft_len/4)
 
         in_data = list(range(0,fft_len))*(test_len//fft_len);
 
         src = blocks.vector_source_c(in_data)
         s2v = blocks.stream_to_vector(8,fft_len)
-        s2ts = blocks.stream_to_tagged_stream(8,fft_len,test_len/fft_len,'packet_len')
+        s2ts = blocks.stream_to_tagged_stream(8,fft_len,int(test_len/fft_len),'packet_len')
         cp_add = digital.ofdm_cyclic_prefixer(fft_len,fft_len+cp_len,0,'packet_len')
         cp_remove = radar.ofdm_cyclic_prefix_remover_cvc(fft_len,cp_len,'packet_len')
         v2s = blocks.vector_to_stream(8,fft_len)
