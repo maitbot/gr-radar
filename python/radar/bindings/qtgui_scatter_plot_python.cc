@@ -13,8 +13,8 @@
 /* If manual edits are made, the following tags should be modified accordingly.    */
 /* BINDTOOL_GEN_AUTOMATIC(0)                                                       */
 /* BINDTOOL_USE_PYGCCXML(0)                                                        */
-/* BINDTOOL_HEADER_FILE(qtgui_scatter_plot.h)                                        */
-/* BINDTOOL_HEADER_FILE_HASH(425793e6f3dbae516f2ee97d112ca05c)                     */
+/* BINDTOOL_HEADER_FILE(qtgui_scatter_plot.h)                                      */
+/* BINDTOOL_HEADER_FILE_HASH(4e4d605a7b90a8b3a37dd8cf73c4d7cc)                     */
 /***********************************************************************************/
 
 #include <pybind11/complex.h>

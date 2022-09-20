@@ -14,7 +14,7 @@
 /* BINDTOOL_GEN_AUTOMATIC(0)                                                       */
 /* BINDTOOL_USE_PYGCCXML(0)                                                        */
 /* BINDTOOL_HEADER_FILE(estimator_sync_pulse_c.h) */
-/* BINDTOOL_HEADER_FILE_HASH(3ba54089f45df6842b57038b364a9af9)                     */
+/* BINDTOOL_HEADER_FILE_HASH(da126d75b30155955db6b753b36c3bf7)                     */
 /***********************************************************************************/
 
 #include <pybind11/complex.h>
