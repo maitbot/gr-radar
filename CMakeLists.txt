@@ -10,7 +10,10 @@
 # Project setup
 ########################################################################
 cmake_minimum_required(VERSION 3.8)
-project(gr-radar CXX C)
+project(gr-radar VERSION 3.10.0.0
+  DESCRIPTION "A generic environment in GNU Radio to experiment with various radar types."
+  HOMEPAGE_URL "https://grradar.wordpress.com"
+  LANGUAGES CXX C)
 enable_testing()
 
 # Install to PyBOMBS target prefix if defined
@@ -32,10 +35,10 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 find_package(Gnuradio REQUIRED)
 
 # Set the version information here
-set(VERSION_MAJOR 1)
-set(VERSION_API   0)
-set(VERSION_ABI   0)
-set(VERSION_PATCH 0)
+set(VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(VERSION_API   ${PROJECT_VERSION_MINOR})
+set(VERSION_ABI   ${PROJECT_VERSION_PATCH})
+set(VERSION_PATCH ${PROJECT_VERSION_TWEAK})
 
 cmake_policy(SET CMP0011 NEW)
 
