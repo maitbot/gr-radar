@@ -53,5 +53,5 @@ install(FILES
     estimator_ofdm.h
     estimator_rcs.h
     trigger_command.h
-    DESTINATION include/radar
+    DESTINATION include/gnuradio/radar
 )
